@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 
@@ -25,8 +25,7 @@ RUN apk --no-cache add ca-certificates
 # Copy the binary from builder
 COPY --from=builder /app/data-collector-service .
 
-# Copy the dataset directory
-COPY --from=builder /app/dataset ./dataset
+# Dataset will be mounted as a volume
 
 # Create .env file from example if needed
 COPY --from=builder /app/.env.example ./.env

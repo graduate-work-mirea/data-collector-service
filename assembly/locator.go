@@ -3,7 +3,6 @@ package assembly
 import (
 	"github.com/graduate-work-mirea/data-collector-service/config"
 	"github.com/graduate-work-mirea/data-collector-service/internal/rabbitmq"
-	"github.com/graduate-work-mirea/data-collector-service/reader"
 	"github.com/graduate-work-mirea/data-collector-service/repository"
 	"github.com/graduate-work-mirea/data-collector-service/service"
 	"go.uber.org/zap"
@@ -12,7 +11,7 @@ import (
 type ServiceLocator struct {
 	Config        *config.Config
 	RabbitClient  *rabbitmq.Client
-	DataReader    *reader.DataReader
+	DataReader    *repository.DataReader
 	RabbitRepo    *repository.RabbitRepository
 	DataProcessor *service.DataProcessor
 	Logger        *zap.SugaredLogger
@@ -30,13 +29,10 @@ func NewServiceLocator(cfg *config.Config, logger *zap.SugaredLogger) (*ServiceL
 		return nil, err
 	}
 
-	// Create data reader
-	dataReader := reader.NewDataReader(cfg.DatasetPath, logger)
+	dataReader := repository.NewDataReader(cfg.DatasetPath, logger)
 
-	// Create rabbit repository
 	rabbitRepo := repository.NewRabbitRepository(rabbitClient, cfg.DataQueueName, logger)
 
-	// Create data processor service
 	dataProcessor := service.NewDataProcessor(dataReader, rabbitRepo, logger)
 
 	return &ServiceLocator{

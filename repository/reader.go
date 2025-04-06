@@ -1,4 +1,4 @@
-package reader
+package repository
 
 import (
 	"encoding/csv"
@@ -37,7 +37,7 @@ func (r *DataReader) ReadData() ([]entity.ProductData, error) {
 	defer file.Close()
 
 	reader := csv.NewReader(file)
-	
+
 	// Skip header row
 	_, err = reader.Read()
 	if err != nil {
@@ -78,28 +78,28 @@ func (r *DataReader) parseRecord(record []string) (entity.ProductData, error) {
 
 	salesQty, _ := strconv.Atoi(record[3])
 	price, _ := strconv.ParseFloat(record[4], 64)
-	
+
 	// Handle empty fields for original price and discount
 	var originalPrice float64
 	if record[5] != "" {
 		originalPrice, _ = strconv.ParseFloat(record[5], 64)
 	}
-	
+
 	var discountPercentage float64
 	if record[6] != "" {
 		discountPercentage, _ = strconv.ParseFloat(record[6], 64)
 	}
-	
+
 	stockLevel, _ := strconv.Atoi(record[7])
 	customerRating, _ := strconv.ParseFloat(record[10], 64)
 	reviewCount, _ := strconv.Atoi(record[11])
 	deliveryDays, _ := strconv.Atoi(record[12])
-	
+
 	isWeekend := false
 	if strings.ToLower(record[14]) == "1" || strings.ToLower(record[14]) == "true" {
 		isWeekend = true
 	}
-	
+
 	isHoliday := false
 	if strings.ToLower(record[15]) == "1" || strings.ToLower(record[15]) == "true" {
 		isHoliday = true
